@@ -2,59 +2,53 @@ from typing import Dict, List
 
 from enum import Enum
 
-class TransactionType(Enum):
+class MarketType(Enum):
+    KOSPI = 1
+    KOSDAQ = 2
+
+class OrderType(Enum):
     BUY = 1
     SELL = 2
 
-class Transaction:
-    market: str
+class CurrencyType(Enum):
+    KRW = 1
+
+class Stock:
+    market: MarketType
     code: str
+    name: str
     price: float
+
+class StockOrder:
+    stock: Stock
     priceIncludedPrice: float
     fee: float
     count: int
     total: float
-    date: str
-    type: TransactionType
+    orderDate: str
+    orderType: OrderType
 
-class Stock:
-    market: str
-    code: str
-    price: float
-    count: float
-    total: float
+class StockBalance:
+    stock: str
+    count: int
+    balance: float
 
-class TransactionRecord:
-    transaction: Transaction
-    beforeBalance: float
-    afterBalance: float
+class CurrencyBalance:
+    currencyType: CurrencyType
+    balance: float
 
 class Wallet:
-    name: str
-    records: List[TransactionRecord]
-    stocks: Dict[str, Stock]
-    balance: str
+    walletName: str
+    stockBalance: List[StockBalance]
+    currencyBalance: List[CurrencyBalance]
+    totalBalance: float
+
+class WalletHistory:
+    history: List[Wallet]
 
 
-class StockTransaction:
-    def buy(self, wallet: Wallet, transaction: Transaction):
-        record = TransactionRecord()
-        record.transaction = transaction
-        record.beforeBalance = wallet.balance
-        record.afterBalance = wallet.balance + transaction.total
-    
-    def calculateStocks(self, wallet: Wallet, transaction: Transaction):
-        for record in wallet.records:
-            if record.transaction.type == TransactionType.BUY:
-                if record.transaction.code in wallet.stocks:
-                    wallet.stocks[record.transaction.code] = ""
 
         
     
-    def sell(self, wallet: Wallet, transaction: Transaction):
-        record = TransactionRecord()
-        record.transaction = transaction
-        record.beforeBalance = wallet.balance
-        record.afterBalance = wallet.balance - transaction.total
 
         
