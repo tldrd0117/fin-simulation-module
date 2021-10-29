@@ -8,5 +8,7 @@ class StockOperation:
         if wallet.totalBalance < stockOrder.paymentAmount:
             print("잔고 부족")
             return False
+        wallet
         sb = StockBalance(stockOrder.stock, stockOrder.count)
         wallet.stockBalance.append(sb)
+
