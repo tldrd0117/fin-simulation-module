@@ -46,16 +46,18 @@ class Payment:
 @dataclass
 class OrderBook:
     order: Order
-    payment: Payment
+    payment: Order
     fee: float
     orderDate: str
     orderType: OrderType
     orderKey: str
 
-    def __init__(self, order: Order, payment: Payment, fee: float) -> None:
+    def __init__(self, order: Order, payment: Order, fee: float, orderDate: str, orderType: OrderType) -> None:
         self.order = order
         self.payment = payment
         self.fee = fee
+        self.orderDate = orderDate
+        self.orderType = orderType
         self.orderKey = uuid.uuid1()
 
 
@@ -96,10 +98,10 @@ class CurrencyBalance:
 class Wallet:
     walletName: str
     orderBooks: List[OrderBook]
-    stockBalance: Dict[str, StockOrder]
-    currencyBalance: Dict[str, Payment]
+    stockBalance: Dict[str, Order]
+    currencyBalance: Dict[str, Order]
     date: str
-    standardCurrency: CurrencyType.KRW
+    standardCurrency: CurrencyType = CurrencyType.KRW
     
     def __init__(self, walletName: str, date: str) -> None:
         self.walletName = walletName
@@ -119,7 +121,7 @@ class Wallet:
     def currencyTotalBalance(self):
         val = 0
         for cb in self.currencyBalance:
-            val += self.currencyBalance[cb].paymentAmount * self.currencyBalance[cb].count 
+            val += self.currencyBalance[cb].orderAmount * self.currencyBalance[cb].count 
         return val
     
     @property
@@ -137,19 +139,17 @@ class Wallet:
             self.stockBalance[orderBook.orderKey] = orderBook.order
     
     def orderStockByKRW(self, orderBook: OrderBook):
-        if orderBook.order.orderAmountType != PaymentType.STOCK or not orderBook.payment.paymentAmountType.isCurrency():
+        if orderBook.order.orderAmountType != PaymentType.STOCK or not orderBook.payment.orderAmountType.isCurrency():
             print("주식 매수 주문이 아닙니다")
             return
-        if orderBook.payment.paymentAmountType != PaymentType.KRW:
+        if orderBook.payment.orderAmountType != PaymentType.KRW:
             print("원화 주문이 아닙니다")
             return
-        if self.currencyTotalBalance < orderBook.payment.paymentAmount:
+        if self.currencyTotalBalance < orderBook.payment.orderAmount:
             print("잔고가 부족합니다")
             return
         
         self.stockBalance[orderBook.orderKey] = orderBook.order
-        if orderBook.orderType == orderBook.orderType.SELL and orderBook.payment.paymentAmount > 0:
-            orderBook.payment.paymentAmount = - orderBook.payment.paymentAmount
         self.currencyBalance[orderBook.orderKey] = orderBook.payment
         self.orderBooks.append(orderBook)
 
