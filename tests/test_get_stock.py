@@ -8,6 +8,10 @@ import os.path
 import dask.dataframe as dd
 import dask.array as da
 import dask.bag as db
+import pathlib
+
+
+basePath = pathlib.Path('../src/h5/marcap')
 
 
 # pytest -s test_get_stock.py
@@ -26,7 +30,7 @@ def loadRemoteDataframe(market: str, startDate: str, endDate: str) -> dd.DataFra
     return df
 
 def loadLocalDataframe(market: str, year: str) -> dd.DataFrame:
-    path = f"/Users/iseongjae/Documents/PersonalProjects/fin-simulation-module/src/h5/marcap/{market}_{year}.hdf"
+    path = f"{basePath.resolve()}/{market}_{year}.hdf"
     if os.path.isfile(path):
         return dd.read_hdf(path, key="marcap", mode="r")
     else:
@@ -35,7 +39,7 @@ def loadLocalDataframe(market: str, year: str) -> dd.DataFrame:
 def saveLocalDataframe(targetDf: dd.DataFrame, market: str, year: str) -> bool:
     try:
         df = loadLocalDataframe(market, year)
-        path = f"/Users/iseongjae/Documents/PersonalProjects/fin-simulation-module/src/h5/marcap/{market}_{year}.hdf"
+        path = f"{basePath.resolve()}/{market}_{year}.hdf"
         if len(df) > 0:
             print(df)
             dt = df["date"].drop_duplicates().map_partitions(np.asarray, dtype=np.datetime64)
@@ -68,9 +72,9 @@ def saveDataframe(df: dd.DataFrame):
     # print(df.loc["2020"])
 
 def test():
-    print(loadLocalDataframe("kosdaq", "2019").compute())
+    # print(loadLocalDataframe("kosdaq", "2019").compute())
     # print(loadLocalDataframe("kosdaq", "2020").compute())
-    # print(loadLocalDataframe("kosdaq", "2021").compute())
+    print(loadLocalDataframe("kosdaq", "2021").compute())
     # print(loadLocalDataframe("kospi", "2019").compute())
     # print(loadLocalDataframe("kospi", "2020").compute())
     # print(loadLocalDataframe("kospi", "2021").compute())
