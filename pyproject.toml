@@ -7,6 +7,8 @@ authors = ["tldrd0117 <tldrd0117@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 dask = {extras = ["complete"], version = "^2021.10.0"}
+tables = "^3.6.1"
+requests = "^2.26.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
